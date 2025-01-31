@@ -1,33 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
-import '../screens/login_screen.dart';
+import '../providers/product_provder.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ProductProvider>(context, listen: false).loadProducts();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final productProvider = Provider.of<ProductProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Cartify"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await authProvider.signOut();
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => LoginScreen()));
-            },
-          ),
-        ],
-      ),
-      body: const Center(
-        child: Text(
-          "Welcome to the Home Screen!",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-      ),
+      appBar: AppBar(title: const Text("E-Commerce App")),
+      body: productProvider.products.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : GridView.builder(
+              padding: const EdgeInsets.all(10),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 0.8,
+              ),
+              itemCount: productProvider.products.length,
+              itemBuilder: (context, index) {
+                final product = productProvider.products[index];
+                return Card(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  elevation: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                          child: Image.network(product.image, fit: BoxFit.cover, width: double.infinity),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text("\$${product.price}", style: const TextStyle(color: Colors.blue)),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
     );
   }
 }
