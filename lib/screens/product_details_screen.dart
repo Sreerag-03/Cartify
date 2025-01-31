@@ -1,5 +1,8 @@
+import 'package:cartify/models/cart_item_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/product_model.dart';
+import '../providers/cart_provider.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final Product product;
@@ -8,6 +11,8 @@ class ProductDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    
     return Scaffold(
       appBar: AppBar(title: Text(product.name)),
       body: Column(
@@ -17,31 +22,40 @@ class ProductDetailsScreen extends StatelessWidget {
             child: Image.network(product.image, height: 250, width: double.infinity, fit: BoxFit.cover),
           ),
           Padding(
-            padding: EdgeInsets.all(16),
+            padding:const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   product.name,
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 10),
+               const SizedBox(height: 10),
                 Text(
                   "\$${product.price}",
-                  style: TextStyle(fontSize: 20, color: Colors.blue),
+                  style:const TextStyle(fontSize: 20, color: Colors.blue),
                 ),
-                SizedBox(height: 10),
+               const SizedBox(height: 10),
                 Text(
                   product.description,
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      // TODO: Implement Add to Cart functionality
+                      cartProvider.addToCart(CartItem(
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                      ));
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Added to Cart"),
+                        backgroundColor: Colors.green,
+                      ));
                     },
-                    child: Text("Add to Cart"),
+                    child: const Text("Add to Cart"),
                   ),
                 ),
               ],

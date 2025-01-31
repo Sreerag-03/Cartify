@@ -1,3 +1,4 @@
+import 'package:cartify/screens/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/product_provder.dart';
@@ -20,7 +21,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final productProvider = Provider.of<ProductProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("E-Commerce App")),
+      appBar: AppBar(title: const Text("E-Commerce App"),actions: [
+  IconButton(
+    icon: const Icon(Icons.shopping_cart),
+    onPressed: () {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CartScreen()));
+    },
+  ),
+],),
       body: productProvider.products.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : GridView.builder(
