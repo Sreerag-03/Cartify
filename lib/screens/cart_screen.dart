@@ -1,3 +1,4 @@
+import 'package:cartify/screens/checkout_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
@@ -17,14 +18,18 @@ class CartScreen extends StatelessWidget {
                   child: ListView.builder(
                     itemCount: cartProvider.items.length,
                     itemBuilder: (context, index) {
-                      final cartItem = cartProvider.items.values.toList()[index];
+                      final cartItem =
+                          cartProvider.items.values.toList()[index];
                       return ListTile(
-                        leading: Image.network(cartItem.image, width: 50, height: 50),
+                        leading: Image.network(cartItem.image,
+                            width: 50, height: 50),
                         title: Text(cartItem.name),
-                        subtitle: Text("\$${cartItem.price} x ${cartItem.quantity}"),
+                        subtitle:
+                            Text("\$${cartItem.price} x ${cartItem.quantity}"),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => cartProvider.removeFromCart(cartItem.id),
+                          onPressed: () =>
+                              cartProvider.removeFromCart(cartItem.id),
                         ),
                       );
                     },
@@ -34,11 +39,16 @@ class CartScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      Text("Total: \$${cartProvider.totalPrice}", style: const TextStyle(fontSize: 18)),
+                      Text("Total: \$${cartProvider.totalPrice}",
+                          style: const TextStyle(fontSize: 18)),
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () {
-                          
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CheckoutScreen()),
+                          );
                         },
                         child: const Text("Proceed to Checkout"),
                       ),
