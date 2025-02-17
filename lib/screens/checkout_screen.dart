@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
+import '../services/order_service.dart';
 import '../services/payment_service.dart';
 
 class CheckoutScreen extends StatelessWidget {
@@ -8,6 +9,7 @@ class CheckoutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
     final paymentService = PaymentService();
+    final orderService = OrderService();
 
     return Scaffold(
       appBar: AppBar(title: Text("Checkout")),
@@ -32,17 +34,25 @@ class CheckoutScreen extends StatelessWidget {
               ),
             ),
             Text("Total: ₹${cartProvider.totalPrice}", style: TextStyle(fontSize: 18)),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  paymentService.makePayment(cartProvider.totalPrice, () {
-                    // TODO: Store order details after successful payment
-                    cartProvider.clearCart();
-                    Navigator.pop(context);
-                  });
+                onPressed: () async {
+                  await orderService.placeOrder(cartProvider.totalPrice, cartProvider.items.values.map((item) => {
+                    'name': item.name,
+                    'price': item.price,
+                    'quantity': item.quantity,
+                    'image': item.image,
+                  }).toList());
+
+                  cartProvider.clearCart();
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Order placed successfully!"), backgroundColor: Colors.green),
+                  );
+
                 },
-                child: Text("Proceed to Pay"),
+                child: const Text("Confirm Order"),
               ),
             ),
           ],

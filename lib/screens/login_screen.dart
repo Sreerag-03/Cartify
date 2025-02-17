@@ -51,7 +51,13 @@ class _LoginScreenState extends State<LoginScreen> {
            const SizedBox(height: 20),
             _isLoading
                 ? const CircularProgressIndicator()
-                : CustomButton(text: "Login", onTap: () => _login(context)),
+                : SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => _login(context),
+                        child: Text("Login"),
+                      ),
+                    ),
            const SizedBox(height: 10),
             TextButton(
               onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SignupScreen())),
