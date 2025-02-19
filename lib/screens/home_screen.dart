@@ -1,9 +1,11 @@
-import 'package:cartify/screens/cart_screen.dart';
-import 'package:cartify/screens/order_history_screen.dart';
+import 'package:cartify/providers/product_provder.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/product_provder.dart';
+import '../providers/wishlist_provider.dart';
+import '../models/product_model.dart';
+import '../models/wishlist_model.dart';
 import 'product_details_screen.dart';
+import 'wishlist_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -20,44 +22,40 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
+    final wishlistProvider = Provider.of<WishlistProvider>(context);
     double screenWidth = MediaQuery.of(context).size.width;
     bool isTablet = screenWidth > 600;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("E-Commerce App"),
+        title: Text("E-Commerce App"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.shopping_cart),
+            icon: Icon(Icons.favorite),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => CartScreen()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => WishlistScreen()),
+              );
             },
           ),
-          IconButton(
-    icon: Icon(Icons.history),
-    onPressed: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => OrderHistoryScreen()),
-      );
-    },
-  ),
         ],
       ),
       body: productProvider.products.isEmpty
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator())
           : GridView.builder(
-              padding: const EdgeInsets.all(10),
+              padding: EdgeInsets.all(10),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                 crossAxisCount: isTablet ? 3 : 2,
+                crossAxisCount: isTablet ? 3 : 2,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
                 childAspectRatio: 0.8,
               ),
               itemCount: productProvider.products.length,
               itemBuilder: (context, index) {
-                final product = productProvider.products[index];
+                final Product product =
+                    productProvider.products[index]; // ✅ Define product here
+
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -67,36 +65,58 @@ class _HomeScreenState extends State<HomeScreen> {
                               ProductDetailsScreen(product: product)),
                     );
                   },
-                  child: Hero(
-                    tag: product.id,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      elevation: 3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    elevation: 3,
+                    child: Column(
+                      children: [
+                        Hero(
+                          tag: product.id,
+                          child: ClipRRect(
                             borderRadius:
-                                const BorderRadius.vertical(top: Radius.circular(10)),
-                            child: Image.network(product.image,
-                                height: 100,
-                                width: double.infinity,
-                                fit: BoxFit.cover),
+                                BorderRadius.vertical(top: Radius.circular(10)),
+                            child: Image.network(
+                              product.image,
+                              height: 100,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(product.name,
-                                style:
-                                    const TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(product.name,
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text("\$${product.price}",
+                              style: TextStyle(color: Colors.blue)),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            wishlistProvider.wishlist
+                                    .any((wish) => wish.id == product.id)
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: wishlistProvider.wishlist
+                                    .any((wish) => wish.id == product.id)
+                                ? Colors.red
+                                : Colors.grey,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Text("\$${product.price}",
-                                style: const TextStyle(color: Colors.blue)),
-                          ),
-                        ],
-                      ),
+                          onPressed: () {
+                            wishlistProvider.toggleWishlist(
+                              WishlistItem(
+                                id: product.id,
+                                name: product.name,
+                                image: product.image,
+                                price: product.price,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 );
