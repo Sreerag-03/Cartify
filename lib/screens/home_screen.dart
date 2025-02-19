@@ -1,4 +1,5 @@
 import 'package:cartify/providers/product_provder.dart';
+import 'package:cartify/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/wishlist_provider.dart';
@@ -31,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text("E-Commerce App"),
         actions: [
           IconButton(
-            icon: Icon(Icons.favorite),
+            icon: const Icon(Icons.favorite),
             onPressed: () {
               Navigator.push(
                 context,
@@ -39,12 +40,21 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfileScreen()),
+              );
+            },
+          ),
         ],
       ),
       body: productProvider.products.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : GridView.builder(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: isTablet ? 3 : 2,
                 crossAxisSpacing: 10,
@@ -74,8 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Hero(
                           tag: product.id,
                           child: ClipRRect(
-                            borderRadius:
-                                BorderRadius.vertical(top: Radius.circular(10)),
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(10)),
                             child: Image.network(
                               product.image,
                               height: 100,
@@ -85,14 +95,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: Text(product.name,
-                              style: TextStyle(fontWeight: FontWeight.bold)),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text("\$${product.price}",
-                              style: TextStyle(color: Colors.blue)),
+                              style: const TextStyle(color: Colors.blue)),
                         ),
                         IconButton(
                           icon: Icon(

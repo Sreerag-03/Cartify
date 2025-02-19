@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   User? _user;
-
+ 
   AuthProvider() {
     _checkUser(); // Auto-login check on startup
   }
